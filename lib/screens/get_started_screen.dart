@@ -13,6 +13,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  var dataOfCandidate;
+  getCandidateData() async {
+    firebaseFirestore.collection('adminCandidate').get().then((value) {
+      setState(() {
+        dataOfCandidate = value;
+      });
+      print(value);
+      print(value.docs.length);
+      print(value.docs[0]['age']);
+    });
+  }
 
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
@@ -28,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }).catchError((onError) {
       print("${onError} Error on updateDatabse");
     });
-
   }
 
   showAlertDialog(BuildContext context) {
@@ -68,9 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // updateDatabase();
+    getCandidateData();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -202,8 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 InkWell(
-                                  onTap: ()
-                                  {
+                                  onTap: () {
                                     showAlertDialog(context);
                                   },
                                   child: Padding(
@@ -233,6 +242,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
+                  child: dataOfCandidate.docs.length == 0
+                      ? Text("")
+                      : ListView.builder(
+                          itemCount: dataOfCandidate.docs.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              leading: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Text(
+                                    "${dataOfCandidate.docs[index]['candidateName']}"),
+                              ),
+                              title:Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Text(
+                                    "${dataOfCandidate.docs[index]['party']}"),
+                              ),
+                              subtitle: Text( "${dataOfCandidate.docs[index]['qualification']}"),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Age ${dataOfCandidate.docs[index]['age']}"),
+                                  SizedBox(width: 45,),
+                                  ElevatedButton(onPressed: (){}, child: Text("VOTE NOW"))
+                                ],
+                              ),
+                            );
+                          }),
                 ),
               ),
             ],

@@ -1,9 +1,12 @@
+import 'package:chainvoteweb/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class ConfirmEmail extends StatelessWidget {
   TextEditingController _emailTextEditingController = TextEditingController();
   TextEditingController _passTextEditingController = TextEditingController();
+
 
   _displaySnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text('$message'));
@@ -75,6 +78,7 @@ class ConfirmEmail extends StatelessWidget {
                             onPressed: () {
                               _displaySnackBar(context,
                                   "Email Verification Link Has Been Sent to your email address");
+                              Get.to(LoginScreen(_emailTextEditingController, _passTextEditingController));
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),

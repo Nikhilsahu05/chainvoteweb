@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../admin_dashboard_screen.dart';
+
 class AdminLoginScreen extends StatefulWidget {
   const AdminLoginScreen({Key? key}) : super(key: key);
 
@@ -58,7 +60,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       _displaySnackBar(context, "Admin Login Successful");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
       );
     } else {
       print('Admin is not present 1');
@@ -72,7 +74,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       _displaySnackBar(context, "Admin Login Successful");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
       );
     } else {
       print('Admin is not present  2');

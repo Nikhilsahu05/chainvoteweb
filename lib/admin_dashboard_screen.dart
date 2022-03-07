@@ -1,6 +1,9 @@
+import 'dart:html';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chainvoteweb/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({Key? key}) : super(key: key);
@@ -10,6 +13,13 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  TextEditingController _candidateName = TextEditingController();
+  TextEditingController _party = TextEditingController();
+  TextEditingController _age = TextEditingController();
+  TextEditingController _qualification = TextEditingController();
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
 
@@ -22,6 +32,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     Widget cancelButton = TextButton(
       child: Text("Confirm"),
       onPressed: () {
+        _auth.signOut();
         Get.to(WelcomeScreen());
       },
     );
@@ -43,9 +54,23 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       },
     );
   }
+  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  updateToDatabase()async{
+    _firebaseFirestore.collection('adminCandidate').doc("${_auth.currentUser?.uid}").set({
+      'candidateName':_candidateName.text,
+      'party':_party.text,
+      'qualification':_qualification.text,
+      'age':_age.text,
+    }).catchError((onError){
+      print(onError);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Column(
         children: [
@@ -189,7 +214,52 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 child: Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                       Text('Add Candidate Info',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      ),
+                      TextField(
+                        controller: _candidateName,
+                        decoration: InputDecoration(
+                          hintText:'Name'
+                        ),
+
+                      ),
+                      TextField(
+                        controller: _party,
+                        decoration: InputDecoration(
+                          hintText:'Party'
+                        ),
+
+                      ),
+                      TextField(
+                        controller: _age,
+                        decoration: InputDecoration(
+                          hintText: 'Age',
+                        ),
+
+                      ),
+                      TextField(
+                        controller: _qualification,
+                        decoration: InputDecoration(
+                          hintText: 'Qualification',
+                        ),
+
+                      ),
+                      ElevatedButton(onPressed: (){
+                        updateToDatabase();
+                      },
+                          child: Text('Add',
+
+                          ))
+                    ],
+                  ),
                 ),
+
               ),
             ],
           ),
@@ -198,3 +268,4 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 }
+
