@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Material(
       child: MaterialApp(
-        home: Scaffold(body: HomeScreen()),
+        home: Scaffold(body: AdminDashboardScreen()),
       ),
     );
   }

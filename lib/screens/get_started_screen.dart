@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:chainvoteweb/screens/welcome_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,98 +103,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: 100,
                       ),
-                      Expanded(
-                        flex: 8,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 60.0, right: 40),
-                                  child: Icon(
-                                    Icons.description,
-                                    size: 32,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Description',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 35,
-                            ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 60.0, right: 40),
-                                  child: Icon(
-                                    Icons.how_to_reg,
-                                    size: 32,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text('Voter Registration',
-                                      style: TextStyle(fontSize: 16)),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 35,
-                            ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 60.0, right: 40),
-                                  child: Icon(
-                                    Icons.how_to_vote,
-                                    size: 32,
-                                  ),
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Voting Area',
-                                        style: TextStyle(fontSize: 16))),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 35,
-                            ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 60.0, right: 40),
-                                  child: Icon(
-                                    Icons.poll,
-                                    size: 32,
-                                  ),
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('Result',
-                                        style: TextStyle(fontSize: 16))),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 35,
-                            ),
-                            SizedBox(
-                              height: 35,
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Expanded(
+                      //   flex: 8,
+                      //
+                      // ),
                       Expanded(
                         flex: 2,
                         child: Container(
@@ -239,43 +153,89 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Expanded(
                 flex: 8,
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: dataOfCandidate.docs.length == 0
-                      ? Text("")
-                      : ListView.builder(
-                          itemCount: dataOfCandidate.docs.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Text(
-                                    "${dataOfCandidate.docs[index]['candidateName']}"),
-                              ),
-                              title:Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Text(
-                                    "${dataOfCandidate.docs[index]['party']}"),
-                              ),
-                              subtitle: Text( "${dataOfCandidate.docs[index]['qualification']}"),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Age ${dataOfCandidate.docs[index]['age']}"),
-                                  SizedBox(width: 45,),
-                                  ElevatedButton(onPressed: (){}, child: Text("VOTE NOW"))
-                                ],
-                              ),
-                            );
-                          }),
-                ),
+                child: Discription(),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+}
+
+class Discription extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'User Manual',
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+          'Welcome',
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+          'These are few Guidelines for user:',
+          style: TextStyle(
+            fontSize: 17.0,
+          ),
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+          'Voting Process',
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text(
+            'Overall,voting process is divided into two phases.All of which will be initialized and terminated by the admin.User have to participate in the process according to current phase.'),
+        SizedBox(
+          height: 20.0,
+        ),
+        Row(
+          children: [
+            Text(
+              'Voting Phase:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+                'After initialization of voting phase from the admin,user can cast the vote in voting section.The casting of vote can be simply done by clicking on "VOTE" button,after which transaction will be initiated and after confirming transaction the vote will get successfully casted.After voting phase gets over user will not be able to vote.'),
+          ],
+        ),
+        SizedBox(
+          height: 15.0,
+        ),
+        Row(
+          children: [
+            Text(
+              'Result Phase:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+                'This is the final stage of whole voting process during which the results of election will be displayed at "Result" section.')
+          ],
+        )
+      ],
+    ));
   }
 }

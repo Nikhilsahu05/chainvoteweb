@@ -1,9 +1,103 @@
 import 'dart:html';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:chainvoteweb/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:web_socket_channel/io.dart';
+
+class ContractLinking extends ChangeNotifier {
+  final String _rpcUrl = "http://127.0.0.1:7545";
+  final String _wsUrl = "ws://10.0.2.2:7545/";
+  final String _privateKey =
+      "6d4240b88168edcf0b5276afa192f2fb6d8af89e761c25987d5b2b5828a14ac8";
+
+  Web3Client? _client;
+  bool isLoading = true;
+
+  String? _abiCode;
+
+  EthereumAddress? _contractAddress;
+
+  Credentials? _credentials;
+
+  var _contract;
+  var _printBallot;
+  var _addCandidate;
+
+  String? deployedName;
+  ContractLinking() {
+    initialSetup();
+  }
+
+  initialSetup() async {
+    // establish a connection to the ethereum rpc node. The socketConnector
+    // property allows more efficient event streams over websocket instead of
+    // http-polls. However, the socketConnector property is experimental.
+    final httpClient = Client();
+    _client = Web3Client(_rpcUrl, httpClient, socketConnector: () {
+      return IOWebSocketChannel.connect(_wsUrl).cast<String>();
+    });
+
+    await getAbi();
+    await getCredentials();
+    await getDeployedContract();
+  }
+
+  Future<void> getAbi() async {
+    // Reading the contract abi
+    String abiStringFile =
+        await rootBundle.loadString("build/artifacts/Candidates.json");
+    var jsonAbi = jsonDecode(abiStringFile);
+    _abiCode = jsonEncode(jsonAbi["abi"]);
+
+    _contractAddress =
+        EthereumAddress.fromHex(jsonAbi["networks"]["5777"]["address"]);
+  }
+
+  Future<void> getCredentials() async {
+    _credentials = await _client?.credentialsFromPrivateKey(_privateKey);
+  }
+
+  Future<void> getDeployedContract() async {
+    // Telling Web3dart where our contract is declared.
+
+    _contract = DeployedContract(
+        ContractAbi.fromJson(_abiCode!, "Candidates"), _contractAddress!);
+
+    // Extracting the functions, declared in contract.
+    _printBallot = _contract?.function("printBallot");
+    _addCandidate = _contract?.function("addCandidate");
+    _printBallot();
+    print(_printBallot);
+  }
+
+  getName() async {
+    // Getting the current name declared in the smart contract.
+    var ballot = await _client
+        ?.call(contract: _contract, function: _printBallot, params: []);
+    isLoading = false;
+    print("Deployed Name => $ballot");
+    notifyListeners();
+  }
+
+  setName(String nameToSet) async {
+    // Setting the name to nameToSet(name defined by user)
+    isLoading = true;
+    notifyListeners();
+    await _client?.sendTransaction(
+        _credentials!,
+        Transaction.callContract(
+            contract: _contract,
+            function: _addCandidate,
+            parameters: [nameToSet]));
+    getName();
+  }
+}
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({Key? key}) : super(key: key);
@@ -54,23 +148,75 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       },
     );
   }
-  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  //
+  // FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  //
+  // addCandidatesDetailsToDB() async {
+  //   _firebaseFirestore
+  //       .collection('adminCandidate')
+  //       .doc("${_auth.currentUser?.uid}")
+  //       .set({
+  //     'candidateName': _candidateName.text,
+  //     'party': _party.text,
+  //     'qualification': _qualification.text,
+  //     'age': _age.text,
+  //   }).catchError((onError) {
+  //     print(onError);
+  //   });
+  //
+  //   // ethAddCandidate();
+  // }
 
-  updateToDatabase()async{
-    _firebaseFirestore.collection('adminCandidate').doc("${_auth.currentUser?.uid}").set({
-      'candidateName':_candidateName.text,
-      'party':_party.text,
-      'qualification':_qualification.text,
-      'age':_age.text,
-    }).catchError((onError){
-      print(onError);
-    });
-  }
+  // ethAddCandidate() {
+  //   //  creating contractFactory after compiled Solidity file on Remix
+  //   var CandidateContractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+  //   var CandidateContractABI = [
+  //     {
+  //       "inputs": [
+  //         {"internalType": "string", "name": "candidate_", "type": "string"}
+  //       ],
+  //       "name": "addCandidate",
+  //       "outputs": [],
+  //       "stateMutability": "nonpayable",
+  //       "type": "function"
+  //     },
+  //     {
+  //       "inputs": [],
+  //       "name": "printBallot",
+  //       "outputs": [
+  //         {"internalType": "string[]", "name": "", "type": "string[]"}
+  //       ],
+  //       "stateMutability": "view",
+  //       "type": "function"
+  //     }
+  //   ];
+  //
+  //   var provider = new ethers.providers.Web3Provider(
+  //     web3.currentProvider,
+  //     "ropsten"
+  //   );
+  //
+  //   var CandContract;
+  //   var signer;
+  //
+  //   provider.listAccounts(0).then((accounts) => {
+  //     signer = provider.getSigner(accounts[0]);
+  //     CandContract = new ethers.Contract(
+  //       CandidateContractAddress,
+  //       CandidateContractABI,
+  //       signer
+  //   );
+  //   });
+  //
+  //   addCandidate() async {
+  //   var candidate = "Modi";
+  //   var addCandidatePromise = CandContract.addCandidate(candidate);
+  //   await addCandidatePromise;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       body: Column(
         children: [
@@ -217,49 +363,40 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text('Add Candidate Info',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
+                      Text(
+                        'Add Candidate Info',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
                       ),
                       TextField(
                         controller: _candidateName,
-                        decoration: InputDecoration(
-                          hintText:'Name'
-                        ),
-
+                        decoration: InputDecoration(hintText: 'Name'),
                       ),
                       TextField(
                         controller: _party,
-                        decoration: InputDecoration(
-                          hintText:'Party'
-                        ),
-
+                        decoration: InputDecoration(hintText: 'Party'),
                       ),
                       TextField(
                         controller: _age,
                         decoration: InputDecoration(
                           hintText: 'Age',
                         ),
-
                       ),
                       TextField(
                         controller: _qualification,
                         decoration: InputDecoration(
                           hintText: 'Qualification',
                         ),
-
                       ),
-                      ElevatedButton(onPressed: (){
-                        updateToDatabase();
-                      },
-                          child: Text('Add',
-
-                          ))
+                      ElevatedButton(
+                          onPressed: () {
+                            // addCandidatesDetailsToDB();
+                          },
+                          child: Text('Add'))
                     ],
                   ),
                 ),
-
               ),
             ],
           ),
@@ -268,4 +405,3 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 }
-
