@@ -78,10 +78,12 @@ class ContractLinking extends ChangeNotifier {
 
   getName() async {
     // Getting the current name declared in the smart contract.
+
     var ballot = await _client
         ?.call(contract: _contract, function: _printBallot, params: []);
+    deployedName = ballot![0];
     isLoading = false;
-    print("Deployed Name => $ballot");
+    print("Deployed Name => $deployedName");
     notifyListeners();
   }
 
