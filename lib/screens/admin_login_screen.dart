@@ -1,10 +1,10 @@
-import 'package:chainvoteweb/screens/get_started_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../admin_dashboard_screen.dart';
+import '../admin_tab_bar/admin_tab_bar.dart';
 
 class AdminLoginScreen extends StatefulWidget {
   const AdminLoginScreen({Key? key}) : super(key: key);
@@ -60,7 +60,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       _displaySnackBar(context, "Admin Login Successful");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
+        MaterialPageRoute(builder: (context) => AdminTabBarScreen()),
       );
     } else {
       print('Admin is not present 1');

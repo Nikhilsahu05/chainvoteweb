@@ -1,5 +1,5 @@
+import 'package:chainvoteweb/candidate_tab_bar/candidate_tab_bar.dart';
 import 'package:chainvoteweb/forgot_password.dart';
-import 'package:chainvoteweb/screens/get_started_screen.dart';
 import 'package:chainvoteweb/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(content: Text('Successfully Logged In!'));
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+            MaterialPageRoute(builder: (context) => CandidateTabBarScreen()),
           );
         } else {
           _displaySnackBar(context, "Your Email id is not verified");

@@ -1,10 +1,8 @@
-import 'package:chainvoteweb/admin_dashboard_screen.dart';
-import 'package:chainvoteweb/screens/get_started_screen.dart';
-import 'package:chainvoteweb/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:chainvoteweb/screens/print_ballot.dart';
+
+import 'admin_tab_bar/admin_tab_bar.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Material(
       child: MaterialApp(
-        home: Scaffold(body: Ballot()),
+        home: Scaffold(body: AdminTabBarScreen()),
       ),
     );
   }
