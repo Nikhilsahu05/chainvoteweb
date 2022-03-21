@@ -1,6 +1,7 @@
 import 'package:chainvoteweb/candidate_tab_bar/candidate_tab_bar.dart';
 import 'package:chainvoteweb/forgot_password.dart';
 import 'package:chainvoteweb/screens/signup_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
@@ -19,7 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   var checkboxForgot = false;
-
+  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   _displaySnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text('$message'));
     _scaffoldKey.currentState!.showSnackBar(snackBar);
@@ -29,42 +30,47 @@ class _LoginScreenState extends State<LoginScreen> {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void signIn() async {
+  Future signIn() async {
     print(widget._emailTextController.text);
     print(widget._passTextController.text);
-    try {
-      final user = (await _auth.signInWithEmailAndPassword(
-        email: widget._emailTextController.text,
-        password: widget._passTextController.text,
-      ))
-          .user;
-      if (user != null) {
-        if (user.emailVerified) {
-          print(user);
-          print("successfully logged in ");
-          SnackBar(content: Text('Successfully Logged In!'));
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CandidateTabBarScreen()),
-          );
-        } else {
-          _displaySnackBar(context, "Your Email id is not verified");
-        }
-      } else {
-        setState(() {
-          _displaySnackBar(context, "Wrong Credentials");
-          print("Some error");
-        });
-      }
-    } on Exception catch (e) {
-      print("Some error");
-      _displaySnackBar(context, "$e");
-      SnackBar(content: Text('Try Again! $e!'));
-    }
+    _auth
+        .signInWithEmailAndPassword(
+            email: widget._emailTextController.text,
+            password: widget._passTextController.text)
+        .then((value) {
+      checkRegisteredUser();
+    }).catchError((onError) {
+      print(onError);
+      _displaySnackBar(context, "$onError");
+    });
   }
 
   Future sendResetLink(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
+  }
+
+  checkRegisteredUser() async {
+    await _firebaseFirestore
+        .collection('VoterDetails')
+        .where('email', isEqualTo: "${_auth.currentUser?.email}")
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      for (var i = 0; i < value.docs.length; i++) {
+        print(value.docs.length);
+        print(value.docs[i]['email']);
+        print(value.docs[i]['registered']);
+        if (value.docs[i]['registered'] == false) {
+          _displaySnackBar(context, "User not registered");
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => CandidateTabBarScreen()),
+              (route) => false);
+        }
+        print(value.docs[i]['aadhar']);
+      }
+    });
   }
 
   @override

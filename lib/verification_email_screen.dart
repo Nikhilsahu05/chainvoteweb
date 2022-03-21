@@ -7,7 +7,6 @@ class ConfirmEmail extends StatelessWidget {
   TextEditingController _emailTextEditingController = TextEditingController();
   TextEditingController _passTextEditingController = TextEditingController();
 
-
   _displaySnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text('$message'));
     _scaffoldKey.currentState!.showSnackBar(snackBar);
@@ -78,7 +77,8 @@ class ConfirmEmail extends StatelessWidget {
                             onPressed: () {
                               _displaySnackBar(context,
                                   "Email Verification Link Has Been Sent to your email address");
-                              Get.to(LoginScreen(_emailTextEditingController, _passTextEditingController));
+                              Get.to(LoginScreen(_emailTextEditingController,
+                                  _passTextEditingController));
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),

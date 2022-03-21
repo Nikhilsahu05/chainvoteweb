@@ -1,11 +1,11 @@
-import 'package:chainvoteweb/verification_email_screen.dart';
+import 'package:chainvoteweb/screens/login_screen.dart';
+import 'package:chainvoteweb/screens/voter_adhaar_registration.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -27,33 +27,61 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController nameTextEditingController = TextEditingController();
   TextEditingController confirmPassEditingController = TextEditingController();
   String uid = "";
-  void _register() async {
-    try {
-      final user = (await _auth.createUserWithEmailAndPassword(
-        email: _emailTextController.text,
-        password: _passTextController.text,
-      ))
-          .user;
-      if (user != null) {
-        user.sendEmailVerification();
-        print(user);
-        _displaySnackBar(context, "Successfully Resistered");
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ConfirmEmail()),
-        );
-        setState(() {
-          _userEmail = user.email;
-          uid = user.uid;
-        });
-      } else {
-        return _displaySnackBar(context, "Try Again");
+  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  checkRegisteredUser() async {
+    await _firebaseFirestore
+        .collection('VoterDetails')
+        .where('email', isEqualTo: "${auth.currentUser?.email}")
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      for (var i = 0; i < value.docs.length; i++) {
+        print(value.docs.length);
+        print(value.docs[i]['email']);
+        print(value.docs[i]['registered']);
+        if (value.docs[i]['registered'] == false) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VoterRegisterationScreen()),
+              (route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      LoginScreen(_emailTextController, _passTextController)),
+              (route) => false);
+        }
+        print(value.docs[i]['aadhar']);
       }
-    } on Exception catch (e) {
-      print("Exeption Found On $e");
-      return _displaySnackBar(context, "$e");
-    }
+    });
+  }
+
+  void _register() async {
+    auth
+        .createUserWithEmailAndPassword(
+            email: _emailTextController.text,
+            password: _passTextController.text)
+        .then((value) {
+      checkRegisteredUser();
+    }).catchError((onError) {
+      print('${auth.currentUser}');
+      auth
+          .signInWithEmailAndPassword(
+              email: _emailTextController.text,
+              password: _passTextController.text)
+          .then((value) {
+        checkRegisteredUser();
+      }).catchError((onError) {
+        print(onError);
+      });
+
+      print("an exeption found");
+      print(onError);
+    });
   }
 
   final snackBar = SnackBar(
@@ -143,12 +171,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
+                                      context,
+                                      MaterialPageRoute(
                                         builder: (context) => LoginScreen(
                                             _emailTextController,
-                                            _passTextController)),
-                                  );
+                                            _passTextController),
+                                      ));
                                 },
                                 child: Text(
                                   "Log in",

@@ -13,7 +13,7 @@ class AddCandidateScreen extends StatefulWidget {
 class _AddCandidateScreenState extends State<AddCandidateScreen> {
   Client? httpClient;
   Web3Client? ethClient;
-  TextEditingController controller = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
 
   @override
   void initState() {
@@ -67,6 +67,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
+                                controller: _nameController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Full Name',
@@ -128,7 +129,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                       elevation: 12,
                       child: InkWell(
                         onTap: () {
-                          addCandidate("name", ethClient!);
+                          getTotalCandidates(ethClient!);
                         },
                         child: Container(
                           padding: EdgeInsets.all(0.0),

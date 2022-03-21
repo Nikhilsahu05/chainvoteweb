@@ -3,6 +3,8 @@ import 'package:web3dart/web3dart.dart';
 
 import 'constants.dart';
 
+List candidateInfoList = [];
+
 Future<DeployedContract> loadContract() async {
   String abi = await rootBundle.loadString('assets/abi.json');
   String contractAddress = contractAddress1;
@@ -39,6 +41,7 @@ Future<String> addCandidate(String name, Web3Client ethClient) async {
   var response =
       await callFunction('addCandidate', [name], ethClient, owner_private_key);
   print('Candidate added successfully');
+  print('$name');
   return response;
 }
 
@@ -52,6 +55,8 @@ Future<String> addCandidate(String name, Web3Client ethClient) async {
 
 Future<List> getTotalCandidates(Web3Client ethClient) async {
   List<dynamic> result = await ask('getTotalCandidates', [], ethClient);
+  print('result ==> ${result[0]}');
+  print('result ==> ${result.length}');
   return result;
 }
 
@@ -80,4 +85,15 @@ Future<String> vote(int candidateIndex, Web3Client ethClient) async {
       "vote", [BigInt.from(candidateIndex)], ethClient, voter_private_key);
   print("Vote counted successfully");
   return response;
+}
+
+Future<List> candidateInfo(int index, Web3Client ethClient) async {
+  List<dynamic> result =
+      await ask('candidateInfo', [BigInt.from(index)], ethClient);
+  print("Printing candidateInfo ==> $result, ${result.length}");
+  print("Printing candidateInfoList ==> $result, ${result.length}");
+  candidateInfoList.add(result[index]);
+  print(
+      "Printing candidateInfoList ==> $candidateInfoList, ${candidateInfoList.length}");
+  return result;
 }

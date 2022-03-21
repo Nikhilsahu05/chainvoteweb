@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:web3dart/web3dart.dart';
 
-class CandidateScreens extends StatelessWidget {
-  const CandidateScreens({Key? key}) : super(key: key);
+class CandidateScreens extends StatefulWidget {
+  @override
+  State<CandidateScreens> createState() => _CandidateScreensState();
+}
+
+class _CandidateScreensState extends State<CandidateScreens> {
+  Web3Client? web3client;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +66,7 @@ class CandidateScreens extends StatelessWidget {
                     ),
                     Flexible(
                       child: ListView.builder(
-                          itemCount: 5,
+                          itemCount: 1,
                           itemBuilder: (context, index) {
                             return ListTile(
                               leading: Text("${(index + 1)}"),
@@ -68,7 +74,7 @@ class CandidateScreens extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Text("Name"),
+                                  Text(""),
                                   Text("Age"),
                                   Text("Party"),
                                   Text("Qualification"),
