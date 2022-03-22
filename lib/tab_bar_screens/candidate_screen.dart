@@ -89,40 +89,62 @@ class _CandidateScreensState extends State<CandidateScreens> {
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 150,
-                  child: Text(
-                    "#",
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: Text(
+                      "#",
+                      style: TextStyle(
+                          letterSpacing: 1.2, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-                Container(
-                  width: 150,
-                  child: Text(
-                    "Name",
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: Text(
+                      "Name",
+                      style: TextStyle(
+                          letterSpacing: 1.2, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-                Container(
-                  width: 150,
-                  child: Text(
-                    "Qualification",
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: Text(
+                      "Qualification",
+                      style: TextStyle(
+                          letterSpacing: 1.2, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-                Container(
-                  width: 150,
-                  child: Text(
-                    "Party",
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: Text(
+                      "Party",
+                      style: TextStyle(
+                          letterSpacing: 1.2, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-                Container(
-                  width: 150,
-                  child: Text(
-                    "Age",
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: Text(
+                      "Age",
+                      style: TextStyle(
+                          letterSpacing: 1.2, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
             ),
+            Divider(thickness: 1.5),
             FutureBuilder<List>(
               future: getNumCandidates(ethClient!),
               builder: (context, snapshot) {
@@ -143,40 +165,58 @@ class _CandidateScreensState extends State<CandidateScreens> {
                                   child: CircularProgressIndicator(),
                                 );
                               } else {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                return Column(
                                   children: [
-                                    Text("${i + 1}"),
-                                    Container(
-                                      width: 150,
-                                      child: Text(
-                                        candidatesnapshot.data![0][2]
-                                            .toString(),
-                                      ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            width: 150,
+                                            child: Text(
+                                              "#",
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            width: 150,
+                                            child: Text(
+                                              "${candidatesnapshot.data![0][2].toString()}",
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            width: 150,
+                                            child: Text(
+                                              "${candidatesnapshot.data![0][3].toString()}",
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            width: 150,
+                                            child: Text(
+                                              "${candidatesnapshot.data![0][4].toString()}",
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            width: 150,
+                                            child: Text(
+                                              "${candidatesnapshot.data![0][0].toString()}",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Container(
-                                      width: 150,
-                                      child: Text(
-                                        candidatesnapshot.data![0][3]
-                                            .toString(),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 150,
-                                      child: Text(
-                                        candidatesnapshot.data![0][4]
-                                            .toString(),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 150,
-                                      child: Text(
-                                        candidatesnapshot.data![0][0]
-                                            .toString(),
-                                      ),
-                                    ),
+                                    Divider(thickness: 1.5),
                                   ],
                                 );
                               }
