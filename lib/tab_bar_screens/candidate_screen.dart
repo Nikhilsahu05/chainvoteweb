@@ -1,5 +1,9 @@
+import 'package:chainvoteweb/utilities/backend_function.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
+
+import '../utilities/constants.dart';
 
 class CandidateScreens extends StatefulWidget {
   @override
@@ -7,107 +11,205 @@ class CandidateScreens extends StatefulWidget {
 }
 
 class _CandidateScreensState extends State<CandidateScreens> {
-  Web3Client? web3client;
+  var httpClient;
+  var ethClient;
+  var totalCandidates;
+
+  getTotalCandidates() async {
+    print(getNumCandidates(ethClient));
+  }
+
+  @override
+  void initState() {
+    httpClient = Client();
+    ethClient = Web3Client(infura_url, httpClient);
+    getTotalCandidates();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Scaffold(
-        backgroundColor: Colors.blue.shade200,
-        body: Center(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.60,
-            width: MediaQuery.of(context).size.width * 0.65,
-            child: Card(
-              elevation: 18,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              child: Center(
-                child: Column(
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.all(14),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        leading: Text(
-                          "#",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              "Name",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "Age",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "Party",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "Qualification",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Divider(
-                        thickness: 1,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Flexible(
-                      child: ListView.builder(
-                          itemCount: 1,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: Text("${(index + 1)}"),
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(""),
-                                  Text("Age"),
-                                  Text("Party"),
-                                  Text("Qualification"),
-                                ],
-                              ),
+                    FutureBuilder<List>(
+                        future: getNumCandidates(ethClient),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
                             );
-                          }),
-                    )
+                          }
+                          return Text(
+                            snapshot.data![0].toString(),
+                            style: TextStyle(
+                                fontSize: 50, fontWeight: FontWeight.bold),
+                          );
+                        }),
+                    Text('Total Candidates')
                   ],
                 ),
-              ),
+                Column(
+                  children: [
+                    FutureBuilder<List>(
+                        future: getTotalVotes(ethClient),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Text(
+                            snapshot.data![0].toString(),
+                            style: TextStyle(
+                                fontSize: 50, fontWeight: FontWeight.bold),
+                          );
+                        }),
+                    Text('Total Votes')
+                  ],
+                ),
+              ],
             ),
-          ),
+            SizedBox(
+              height: 20,
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 150,
+                  child: Text(
+                    "#",
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: Text(
+                    "Name",
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: Text(
+                    "Qualification",
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: Text(
+                    "Party",
+                  ),
+                ),
+                Container(
+                  width: 150,
+                  child: Text(
+                    "Age",
+                  ),
+                ),
+              ],
+            ),
+            FutureBuilder<List>(
+              future: getNumCandidates(ethClient!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      for (int i = 0; i < snapshot.data![0].toInt(); i++)
+                        FutureBuilder<List>(
+                            future: candidateInfo(i, ethClient!),
+                            builder: (context, candidatesnapshot) {
+                              if (candidatesnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${i + 1}"),
+                                    Container(
+                                      width: 150,
+                                      child: Text(
+                                        candidatesnapshot.data![0][2]
+                                            .toString(),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 150,
+                                      child: Text(
+                                        candidatesnapshot.data![0][3]
+                                            .toString(),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 150,
+                                      child: Text(
+                                        candidatesnapshot.data![0][4]
+                                            .toString(),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 150,
+                                      child: Text(
+                                        candidatesnapshot.data![0][0]
+                                            .toString(),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            })
+                    ],
+                  );
+                }
+              },
+            )
+          ],
         ),
       ),
-      Positioned(
-        top: 50,
-        left: 300,
-        child: Container(
-          height: 50,
-          width: MediaQuery.of(context).size.width * 0.60,
-          color: Colors.red,
-          child: Center(
-            child: Text(
-              "Add Candidate Information".toUpperCase(),
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.2),
-            ),
-          ),
-        ),
-      ),
-    ]);
+    );
   }
 }
+//       Flexible(
+//                                         child: Text(
+//                                           candidatesnapshot.data![0][3]
+//                                               .toString(),
+//                                           textAlign: TextAlign.start,
+//                                         ),
+//                                       ),
+//                                       Flexible(
+//                                         child: Text(
+//                                           candidatesnapshot.data![0][4]
+//                                               .toString(),
+//                                           textAlign: TextAlign.start,
+//                                         ),
+//                                       ),
+//                                       Flexible(
+//                                         child: Text(
+//                                           candidatesnapshot.data![0][0]
+//                                               .toString(),
+//                                           textAlign: TextAlign.start,
+//                                         ),
+//                                       ),

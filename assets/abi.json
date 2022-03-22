@@ -10,9 +10,24 @@
         "internalType": "string",
         "name": "_name",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_age",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_qualification",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_party",
+        "type": "string"
       }
     ],
-    "name": "addCandidate",
+    "name": "addCandidateOtherInfo",
     "outputs": [
       {
         "internalType": "string",
@@ -44,11 +59,78 @@
             "internalType": "uint8",
             "name": "votes",
             "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "age",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "qualification",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "party",
+            "type": "string"
           }
         ],
         "internalType": "struct Voting.Candidate",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "candidates",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "votes",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "age",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "qualification",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "party",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "electionName",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -69,6 +151,19 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getNumCandidates",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

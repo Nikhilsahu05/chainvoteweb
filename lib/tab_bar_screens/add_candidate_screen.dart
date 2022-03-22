@@ -14,6 +14,9 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
   Client? httpClient;
   Web3Client? ethClient;
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
+  TextEditingController _partyController = TextEditingController();
+  TextEditingController _qualificationController = TextEditingController();
 
   @override
   void initState() {
@@ -79,6 +82,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
+                                controller: _qualificationController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Qualification',
@@ -101,6 +105,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
+                                controller: _partyController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Party',
@@ -112,6 +117,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
+                                controller: _ageController,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Age',
@@ -129,7 +135,16 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                       elevation: 12,
                       child: InkWell(
                         onTap: () {
-                          getTotalCandidates(ethClient!);
+                          addCandidate(
+                                  _ageController.text,
+                                  _nameController.text,
+                                  _qualificationController.text,
+                                  _partyController.text,
+                                  ethClient!)
+                              .catchError((onError) {
+                            print(
+                                "Error In AddCandidate function ====> $onError");
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.all(0.0),

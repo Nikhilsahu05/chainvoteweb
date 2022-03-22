@@ -1,8 +1,7 @@
+import 'package:chainvoteweb/admin_tab_bar/admin_tab_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'admin_tab_bar/admin_tab_bar.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

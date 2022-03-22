@@ -37,10 +37,13 @@ Future<String> startElection(String name, Web3Client ethClient) async {
   return response;
 }
 
-Future<String> addCandidate(String name, Web3Client ethClient) async {
-  var response =
-      await callFunction('addCandidate', [name], ethClient, owner_private_key);
+Future<String> addCandidate(String name, String age, String qualification,
+    String party, Web3Client ethClient) async {
+  var response = await callFunction('addCandidateOtherInfo',
+      [age, name, qualification, party], ethClient, owner_private_key);
   print('Candidate added successfully');
+  print(
+      'Age ==> $age,Name ==> $name, Qualification==> $qualification, Party ==> $party');
   print('$name');
   return response;
 }
@@ -57,6 +60,12 @@ Future<List> getTotalCandidates(Web3Client ethClient) async {
   List<dynamic> result = await ask('getTotalCandidates', [], ethClient);
   print('result ==> ${result[0]}');
   print('result ==> ${result.length}');
+  return result;
+}
+
+Future<List> getNumCandidates(Web3Client ethClient) async {
+  List<dynamic> result = await ask('getNumCandidates', [], ethClient);
+
   return result;
 }
 
@@ -90,10 +99,6 @@ Future<String> vote(int candidateIndex, Web3Client ethClient) async {
 Future<List> candidateInfo(int index, Web3Client ethClient) async {
   List<dynamic> result =
       await ask('candidateInfo', [BigInt.from(index)], ethClient);
-  print("Printing candidateInfo ==> $result, ${result.length}");
-  print("Printing candidateInfoList ==> $result, ${result.length}");
-  candidateInfoList.add(result[index]);
-  print(
-      "Printing candidateInfoList ==> $candidateInfoList, ${candidateInfoList.length}");
+
   return result;
 }
