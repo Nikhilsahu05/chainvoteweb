@@ -1,4 +1,5 @@
 import 'package:chainvoteweb/utilities/backend_function.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
@@ -6,6 +7,8 @@ import 'package:web3dart/web3dart.dart';
 import '../utilities/constants.dart';
 
 class AddCandidateScreen extends StatefulWidget {
+  const AddCandidateScreen({Key? key}) : super(key: key);
+
   @override
   State<AddCandidateScreen> createState() => _AddCandidateScreenState();
 }
@@ -13,10 +16,12 @@ class AddCandidateScreen extends StatefulWidget {
 class _AddCandidateScreenState extends State<AddCandidateScreen> {
   Client? httpClient;
   Web3Client? ethClient;
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _ageController = TextEditingController();
-  TextEditingController _partyController = TextEditingController();
-  TextEditingController _qualificationController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _partyController = TextEditingController();
+  final TextEditingController _qualificationController =
+      TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -30,7 +35,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
     return Scaffold(
       backgroundColor: Colors.blue.shade200,
       body: Center(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.60,
           width: MediaQuery.of(context).size.width * 0.65,
           child: Card(
@@ -40,23 +45,23 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
             child: Center(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 50,
                   ),
-                  Container(
+                  SizedBox(
                     height: 50,
                     width: 350,
                     child: Center(
                       child: Text(
                         "Add Candidate Information".toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 2.2),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Padding(
@@ -71,7 +76,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
                                 controller: _nameController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Full Name',
                                 ),
@@ -83,7 +88,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
                                 controller: _qualificationController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Qualification',
                                 ),
@@ -106,7 +111,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
                                 controller: _partyController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Party',
                                 ),
@@ -118,7 +123,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                               padding: const EdgeInsets.all(18.0),
                               child: TextField(
                                 controller: _ageController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   labelText: 'Age',
                                 ),
@@ -134,57 +139,80 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                     child: Material(
                       elevation: 12,
                       child: InkWell(
-                        onTap: () {
-                          addCandidate(
+                        onTap: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await addCandidate(
                                   _ageController.text,
                                   _nameController.text,
                                   _qualificationController.text,
                                   _partyController.text,
                                   ethClient!)
                               .catchError((onError) {
-                            print(
-                                "Error In AddCandidate function ====> $onError");
+                            if (kDebugMode) {
+                              print(
+                                  "Error In AddCandidate function ====> $onError");
+                            }
+                          });
+                          setState(() {
+                            isLoading = false;
+                            _nameController.clear();
+                            _qualificationController.clear();
+                            _partyController.clear();
+                            _ageController.clear();
                           });
                         },
-                        child: Container(
-                          padding: EdgeInsets.all(0.0),
-                          height:
-                              40.0, //MediaQuery.of(context).size.width * .08,
-                          width:
-                              150.0, //MediaQuery.of(context).size.width * .3,
-                          decoration: BoxDecoration(),
-                          child: Row(
-                            children: <Widget>[
-                              LayoutBuilder(builder: (context, constraints) {
-                                print(constraints);
-                                return Container(
-                                  height: constraints.maxHeight,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                );
-                              }),
-                              Expanded(
-                                child: Text(
-                                  'ADD',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
+                        child: isLoading == true
+                            ? const SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 5,
+                                ),
+                              )
+                            : Container(
+                                padding: const EdgeInsets.all(0.0),
+                                height:
+                                    40.0, //MediaQuery.of(context).size.width * .08,
+                                width:
+                                    150.0, //MediaQuery.of(context).size.width * .3,
+                                decoration: const BoxDecoration(),
+                                child: Row(
+                                  children: <Widget>[
+                                    LayoutBuilder(
+                                        builder: (context, constraints) {
+                                      if (kDebugMode) {
+                                        print(constraints);
+                                      }
+                                      return Container(
+                                        height: constraints.maxHeight,
+                                        width: 50,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.blue,
+                                        ),
+                                        child: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    }),
+                                    const Expanded(
+                                      child: Text(
+                                        'ADD',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                 ],

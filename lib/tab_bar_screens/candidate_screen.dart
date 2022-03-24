@@ -178,7 +178,7 @@ class _CandidateScreensState extends State<CandidateScreens> {
                                           child: Container(
                                             width: 150,
                                             child: Text(
-                                              "#",
+                                              "${i + 1}",
                                             ),
                                           ),
                                         ),

@@ -1,8 +1,27 @@
+import 'package:chainvoteweb/utilities/backend_function.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
 
-class ChangeState extends StatelessWidget {
-  const ChangeState({Key? key}) : super(key: key);
+import '../utilities/constants.dart';
+
+class ChangeState extends StatefulWidget {
+  @override
+  State<ChangeState> createState() => _ChangeStateState();
+}
+
+class _ChangeStateState extends State<ChangeState> {
+  Client? httpClient;
+  Web3Client? ethClient;
+  final TextEditingController _electionNameController = TextEditingController();
+
+  bool isLoading = false;
+  @override
+  void initState() {
+    httpClient = Client();
+    ethClient = Web3Client(infura_url, httpClient!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,151 +36,242 @@ class ChangeState extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Container(
-                    child: Center(
-                      child: Text(
-                        "Change Phase".toUpperCase(),
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.2),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Container(
-                          child: Text(
-                        "Current Phase :",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.1,
-                            fontSize: 17),
-                      ))),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+              child: FutureBuilder<List>(
+                  future: getElectionActivity(ethClient!),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return Column(
                       children: [
-                        Flexible(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Container(
-                                child: Text(
-                              "Election Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.1,
-                                  fontSize: 17),
-                            )),
-                          ),
+                        SizedBox(
+                          height: 50,
                         ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Election Name',
-                                ),
-                              ),
+                        Container(
+                          child: Center(
+                            child: Text(
+                              "Change Phase".toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2.2),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
+                        Padding(
+                            padding: const EdgeInsets.all(18.0),
                             child: Container(
                                 child: Text(
-                              "Voting",
+                              snapshot.data![0] == false
+                                  ? "Current Phase : Voting Not Started"
+                                  : "Current Phase : Voting Started",
                               style: TextStyle(
+                                  color: snapshot.data![0] == false
+                                      ? Colors.red
+                                      : Colors.green,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2.1,
                                   fontSize: 17),
-                            )),
+                            ))),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18.0),
+                                  child: Container(
+                                      child: Text(
+                                    "Election Name",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 2.1,
+                                        fontSize: 17),
+                                  )),
+                                ),
+                              ),
+                              Flexible(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                          child: snapshot.data![0] == false
+                                              ? TextField(
+                                                  controller:
+                                                      _electionNameController,
+                                                  decoration: InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    labelText: 'Election Name',
+                                                  ),
+                                                )
+                                              : FutureBuilder<List>(
+                                                  future: getElectionName(
+                                                      ethClient!),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    }
+                                                    return Text(
+                                                      snapshot.data![0]
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 50,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    );
+                                                  }))))
+                            ],
                           ),
                         ),
-                        FlutterSwitch(
-                          height: 20.0,
-                          width: 40.0,
-                          padding: 4.0,
-                          toggleSize: 15.0,
-                          borderRadius: 10.0,
-                          activeColor: Colors.blue,
-                          value: true,
-                          onToggle: (value) {},
+                        SizedBox(
+                          height: 30,
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Material(
-                        elevation: 12,
-                        child: InkWell(
-                          onTap: () {},
-                          child: Container(
-                            padding: EdgeInsets.all(0.0),
-                            height:
-                                40.0, //MediaQuery.of(context).size.width * .08,
-                            width:
-                                150.0, //MediaQuery.of(context).size.width * .3,
-                            decoration: BoxDecoration(),
-                            child: Row(
-                              children: <Widget>[
-                                LayoutBuilder(builder: (context, constraints) {
-                                  print(constraints);
-                                  return Container(
-                                    height: constraints.maxHeight,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                }),
-                                Expanded(
-                                  child: Text(
-                                    'Save',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
+                        snapshot.data![0] == false
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Material(
+                                    elevation: 12,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        await startElection(
+                                            _electionNameController.text,
+                                            ethClient!);
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      },
+                                      child: isLoading == true
+                                          ? const SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 5,
+                                              ),
+                                            )
+                                          : Container(
+                                              padding: EdgeInsets.all(0.0),
+                                              height:
+                                                  40.0, //MediaQuery.of(context).size.width * .08,
+                                              width:
+                                                  150.0, //MediaQuery.of(context).size.width * .3,
+                                              decoration: BoxDecoration(),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  LayoutBuilder(builder:
+                                                      (context, constraints) {
+                                                    print(constraints);
+                                                    return Container(
+                                                      height:
+                                                          constraints.maxHeight,
+                                                      width: 50,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.blue,
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        color: Colors.white,
+                                                      ),
+                                                    );
+                                                  }),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Start Voting',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                              )
+                            : Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Material(
+                                    elevation: 12,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        await endElection(ethClient!);
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      },
+                                      child: isLoading == true
+                                          ? const SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 5,
+                                              ),
+                                            )
+                                          : Container(
+                                              padding: EdgeInsets.all(0.0),
+                                              height:
+                                                  40.0, //MediaQuery.of(context).size.width * .08,
+                                              width:
+                                                  150.0, //MediaQuery.of(context).size.width * .3,
+                                              decoration: BoxDecoration(),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  LayoutBuilder(builder:
+                                                      (context, constraints) {
+                                                    print(constraints);
+                                                    return Container(
+                                                      height:
+                                                          constraints.maxHeight,
+                                                      width: 50,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.red,
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        color: Colors.white,
+                                                      ),
+                                                    );
+                                                  }),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'End Voting',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                      ],
+                    );
+                  }),
             ),
           ),
         ),

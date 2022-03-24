@@ -34,6 +34,15 @@ Future<String> startElection(String name, Web3Client ethClient) async {
   var response =
       await callFunction('startElection', [name], ethClient, owner_private_key);
   print('Election started successfully');
+
+  return response;
+}
+
+Future<String> endElection(Web3Client ethClient) async {
+  var response =
+      await callFunction('endElection', [], ethClient, owner_private_key);
+  print('Election Ended successfully');
+  print(response);
   return response;
 }
 
@@ -69,6 +78,24 @@ Future<List> getNumCandidates(Web3Client ethClient) async {
   return result;
 }
 
+Future<List> getElectionActivity(Web3Client ethClient) async {
+  List<dynamic> result = await ask('getElectionActivity', [], ethClient);
+  print(result[0]);
+  return result;
+}
+
+Future<List> getElectionName(Web3Client ethClient) async {
+  List<dynamic> result = await ask('getElectionName', [], ethClient);
+  print(result[0]);
+  return result;
+}
+
+Future<List> getVotingActivity(Web3Client ethClient) async {
+  List<dynamic> result = await ask('getVotingActivity', [], ethClient);
+  print(result[0]);
+  return result;
+}
+
 Future<List> getTotalVotes(Web3Client ethClient) async {
   List<dynamic> result = await ask('getTotalVotes', [], ethClient);
   return result;
@@ -89,9 +116,12 @@ Future<List<dynamic>> ask(
   return result;
 }
 
-Future<String> vote(int candidateIndex, Web3Client ethClient) async {
+Future<String> vote(
+    int candidateIndex, String voterPvtKey, Web3Client ethClient) async {
   var response = await callFunction(
-      "vote", [BigInt.from(candidateIndex)], ethClient, voter_private_key);
+      "vote", [BigInt.from(candidateIndex)], ethClient, voterPvtKey);
+  print("key ==> $voterPvtKey");
+  print("index ==> $candidateIndex");
   print("Vote counted successfully");
   return response;
 }

@@ -1,4 +1,4 @@
-import 'package:chainvoteweb/admin_tab_bar/admin_tab_bar.dart';
+import 'package:chainvoteweb/candidate_tab_bar/candidate_tab_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Material(
       child: MaterialApp(
-        home: Scaffold(body: AdminTabBarScreen()),
+        home: Scaffold(body: CandidateTabBarScreen()),
       ),
     );
   }

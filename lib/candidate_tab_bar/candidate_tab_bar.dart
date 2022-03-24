@@ -10,10 +10,14 @@ class CandidateTabBarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
+
+        initialIndex: 1,
         length: 4,
         child: Scaffold(
           appBar: AppBar(
             bottom: const TabBar(
+
+
               tabs: [
                 Tab(icon: Icon(Icons.info), text: "Information"),
                 Tab(icon: Icon(Icons.ballot), text: "Voting Area"),
