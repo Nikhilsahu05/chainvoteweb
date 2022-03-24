@@ -16,7 +16,6 @@ class _VoterRegisterationScreenState extends State<VoterRegisterationScreen> {
   TextEditingController testingController2 = TextEditingController();
   TextEditingController _adharController = TextEditingController();
 
-  TextEditingController _privateController = TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -46,7 +45,6 @@ class _VoterRegisterationScreenState extends State<VoterRegisterationScreen> {
               'aadhar': value.docs[i]['aadhar'],
               'age': value.docs[i]['age'],
               'email': value.docs[i]['email'],
-              'privateKey': _privateController.text,
               'registered': true,
             }).then((value) {
               Get.to(LoginScreen(testingController1, testingController2));
@@ -80,7 +78,7 @@ class _VoterRegisterationScreenState extends State<VoterRegisterationScreen> {
     return Stack(children: [
       Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.blue.shade200,
+        backgroundColor: Color(0xFF488FB1),
         body: Center(
           child: Container(
             height: MediaQuery.of(context).size.height * 0.5,
@@ -100,42 +98,15 @@ class _VoterRegisterationScreenState extends State<VoterRegisterationScreen> {
                       child: TextField(
                         controller: _adharController,
                         onChanged: (_) {
-                          if (_privateController.text.isNotEmpty &&
-                              _adharController.text.isNotEmpty) {
+                          if (_adharController.text.isNotEmpty) {
                             setState(() {
                               isFieldFilled = true;
-                            });
-                          } else {
-                            setState(() {
-                              isFieldFilled = false;
                             });
                           }
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Aadhar Number',
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: TextField(
-                        controller: _privateController,
-                        onChanged: (_) {
-                          if (_privateController.text.isNotEmpty &&
-                              _adharController.text.isNotEmpty) {
-                            setState(() {
-                              isFieldFilled = true;
-                            });
-                          } else {
-                            setState(() {
-                              isFieldFilled = false;
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Private Key',
                         ),
                       ),
                     ),
@@ -168,11 +139,11 @@ class _VoterRegisterationScreenState extends State<VoterRegisterationScreen> {
       ),
       Positioned(
         top: 175,
-        left: 320,
+        left: 300,
         child: Container(
           height: 50,
-          width: MediaQuery.of(context).size.width * 0.60,
-          color: Colors.red,
+          width: MediaQuery.of(context).size.width * 0.61,
+          color: Color(0xFF4FD3C4),
           child: Center(
             child: Text(
               "REGISTRATION".toUpperCase(),

@@ -199,86 +199,89 @@ class _CandidateVotingAreaScreenState extends State<CandidateVotingAreaScreen> {
                                         height: 20,
                                       ),
                                       Divider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "#",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                      Container(
+                                        color: Colors.green.shade300,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "#",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "Name",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "Name",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "Qualification",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "Qualification",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "Party",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "Party",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "Age",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "Age",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              width: 150,
-                                              child: Text(
-                                                "",
-                                                style: TextStyle(
-                                                    letterSpacing: 1.2,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            Expanded(
+                                              child: Container(
+                                                width: 150,
+                                                child: Text(
+                                                  "",
+                                                  style: TextStyle(
+                                                      letterSpacing: 1.2,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                       Divider(thickness: 1.5),
                                       FutureBuilder<List>(
@@ -416,7 +419,7 @@ class _CandidateVotingAreaScreenState extends State<CandidateVotingAreaScreen> {
                               )
                             : Center(
                                 child: Text(
-                                  "Election has not been started yet!",
+                                  "Election has not started yet!",
                                   style: TextStyle(
                                       fontSize: 20,
                                       letterSpacing: 1.35,
@@ -426,7 +429,13 @@ class _CandidateVotingAreaScreenState extends State<CandidateVotingAreaScreen> {
                       }
                     })
                 : Center(
-                    child: Text("Your Vote Has Counted !"),
+                    child: Text(
+                      "Your Vote has counted!",
+                      style: TextStyle(
+                          fontSize: 20,
+                          letterSpacing: 1.35,
+                          fontWeight: FontWeight.bold),
+                    ),
                   );
           }
         });
