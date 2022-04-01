@@ -31,41 +31,7 @@ class _CandidateVotingAreaScreenState extends State<CandidateVotingAreaScreen> {
       child: Text("OK"),
       onPressed: () {
         Get.back();
-        showTextInputPVTKey(context, index);
-      },
-    );
-
-    // Create AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Are you sure?"),
-      actions: [
-        okButton,
-        cancelButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  showTextInputPVTKey(BuildContext context, int index) {
-    // Create button
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        Get.back();
-      },
-    );
-    Widget okButton = FlatButton(
-      child: Text("Proceed"),
-      onPressed: () {
-        Get.back();
-        vote(index, _pvtKeyController.text, ethClient).catchError((onError) {
+        vote(index, owner_private_key, ethClient).catchError((onError) {
           print(onError);
         });
       },
@@ -73,14 +39,7 @@ class _CandidateVotingAreaScreenState extends State<CandidateVotingAreaScreen> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Enter your MetaMask Private Key ?"),
-      content: TextField(
-        controller: _pvtKeyController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Private Key',
-        ),
-      ),
+      title: Text("Are you sure?"),
       actions: [
         okButton,
         cancelButton,

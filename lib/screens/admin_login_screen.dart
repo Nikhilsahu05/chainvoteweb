@@ -135,7 +135,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Login",
+                      "Admin Login",
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

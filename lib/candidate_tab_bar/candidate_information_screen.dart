@@ -67,7 +67,7 @@ class CandidateInformationScreen extends StatelessWidget {
                     child: RichText(
                       textAlign: TextAlign.left,
                       text: TextSpan(
-                        text: 'Voting Process',
+                        text: 'Voting Process:',
                         style: TextStyle(color: Colors.black, fontSize: 16),
                         children: <TextSpan>[],
                       ),
@@ -111,7 +111,7 @@ class CandidateInformationScreen extends StatelessWidget {
                         children: <TextSpan>[
                           TextSpan(
                               text:
-                                  'After initialization of voting phase from the admin,user can cast the vote in voting section.The casting of vote can be simply done by clicking on "VOTE" button,after which you have to enter your "Metamask Private Key". And after confirming, the transaction will be initiated and your vote will get successfully casted.After voting phase gets over user will not be able to vote.'),
+                                  'After initialization of voting phase from the admin,user can cast the vote in voting section.The casting of vote can be simply done by clicking on "VOTE" button. And after confirming,your vote will get successfully casted.After voting phase gets over user will not be able to vote.'),
                         ],
                       ),
                     ),

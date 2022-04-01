@@ -67,7 +67,6 @@ Future<String> addCandidate(String name, String age, String qualification,
 
 Future<List> getTotalCandidates(Web3Client ethClient) async {
   List<dynamic> result = await ask('getTotalCandidates', [], ethClient);
-  print('result ==> ${result[0]}');
   print('result ==> ${result.length}');
   return result;
 }
@@ -119,8 +118,8 @@ Future<List<dynamic>> ask(
 Future<String> vote(
     int candidateIndex, String voterPvtKey, Web3Client ethClient) async {
   var response = await callFunction(
-      "vote", [BigInt.from(candidateIndex)], ethClient, voterPvtKey);
-  print("key ==> $voterPvtKey");
+      "vote", [BigInt.from(candidateIndex)], ethClient, owner_private_key);
+  print("key ==> $owner_private_key");
   print("index ==> $candidateIndex");
   print("Vote counted successfully");
   return response;
