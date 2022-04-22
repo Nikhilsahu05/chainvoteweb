@@ -54,7 +54,7 @@ dev_dependencies:
   provider: ^6.0.2
   web3dart: ^2.3.5
   http: ^0.13.4
-  web_socket_channel: ^1.2.0
+  web_socket_channel: ^2.1.0
   flutter_switch: ^0.0.2
   adaptive_dialog: ^1.4.0
 
